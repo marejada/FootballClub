@@ -1,9 +1,6 @@
 package DataAccess;
 
-import BusinessLogic.Game;
-import BusinessLogic.Player;
-import BusinessLogic.Score;
-import BusinessLogic.User;
+import BusinessLogic.*;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -107,7 +104,7 @@ public class DBProcessor {
             if (rs.next()) {
                 player.setName(rs.getString(1));
                 player.setCountry(rs.getString(2));
-                player.setPosition(getPositionName (rs.getInt(3)));
+                player.setPosition(getPositionName(rs.getInt(3)));
                 player.setRate(rs.getInt(4));
                 player.setBirth(rs.getTimestamp(5));
                 player.setRightFooted(rs.getBoolean(6));
@@ -319,11 +316,11 @@ public class DBProcessor {
         return score;
     }
 
-    public static void deleteGame (Game game) {
+    public static void deleteEvent(Event event) {
         try {
             PreparedStatement pr = connection.prepareStatement("DELETE FROM event\n" +
                     "WHERE event_id = ?");
-            pr.setInt(1, game.getEventId());
+            pr.setInt(1, event.getEventId());
             pr.execute();
             pr.close();
         } catch (SQLException e) {
@@ -372,5 +369,46 @@ public class DBProcessor {
         } catch (SQLException e) {
             e.printStackTrace();
         }
+    }
+
+    public static int newTraining (Training training) {
+        int eventId = 0;
+        try {
+            PreparedStatement pr = connection.prepareStatement("INSERT INTO event (name, event_date, \n" +
+                    "istraining, training_type) VALUES \n" +
+                    "(?, ?, ?, ?)\n" +
+                    "RETURNING event_id");
+            pr.setString(1, training.getEventName());
+            pr.setTimestamp(2, training.getEventDate());
+            pr.setBoolean(3, false);
+            pr.setInt(4, getTrainingTypeId(training.getTrainingType()));
+            ResultSet rs = pr.executeQuery();
+            if (rs.next()) {
+                eventId = rs.getInt(1);
+            }
+            rs.close();
+            pr.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return eventId;
+    }
+
+    public static int getTrainingTypeId (String trainingTypeName) {
+        int trainingTypeId = 0;
+        try {
+            PreparedStatement pr = connection.prepareStatement("SELECT training_type_id\n" +
+                    "FROM training_type WHERE UPPER (training_name)= UPPER (?)");
+            pr.setString(1, trainingTypeName);
+            ResultSet rs = pr.executeQuery();
+            if (rs.next()) {
+                trainingTypeId = rs.getInt(1);
+            }
+            rs.close();
+            pr.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return trainingTypeId;
     }
 }

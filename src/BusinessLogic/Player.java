@@ -15,7 +15,7 @@ public class Player {
     private int playerId;
     private boolean isInMainTeam;
 
-    Player(int playerId) {
+    public Player(int playerId) {
         this.playerId = playerId;
         if (playerId != 0) { //уже существующий игрок
             Player tempPlayer = DBProcessor.getPlayer(this);

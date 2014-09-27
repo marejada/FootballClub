@@ -7,10 +7,7 @@ public class Game extends Event {
 
     Game (int eventId) {
         isTraining = false;
-        if (eventId == 0) { //если новая
-           int newEventId = DBProcessor.newGame(this);
-           this.eventId = newEventId;
-        }  else { // если уже есть
+        if (eventId != 0) { // если уже есть
             this.eventId = eventId;
             Game newGame = DBProcessor.getGame(this);
             eventName = newGame.getEventName();
@@ -20,7 +17,7 @@ public class Game extends Event {
     }
 
     public void deleteGame () {
-        DBProcessor.deleteGame(this);
+        DBProcessor.deleteEvent(this);
         DBProcessor.deleteScore(this);
     }
 
@@ -40,5 +37,9 @@ public class Game extends Event {
     public void addNewScore (Score score) {
         this.score = score;
         DBProcessor.newScore(this);
+    }
+    public void Save () {
+        int newEventId = DBProcessor.newGame(this);
+        this.eventId = newEventId;
     }
 }
