@@ -1,14 +1,39 @@
 package BusinessLogic;
 
-import java.sql.Date;
+import java.sql.Timestamp;
 
 public class Event {
-    private String eventName;
-    public enum EventType { // типы событий
-        Game,
-        Training
-    };
+    protected String eventName;
+    protected boolean isTraining;
+    protected Timestamp eventDate;
+    protected int eventId;
 
-    private EventType eventType;
-    private Date eventDate;
+    public String getEventName() {
+        return eventName;
+    }
+
+    public void setEventName(String eventName) {
+        this.eventName = eventName;
+    }
+
+    public boolean isTraining() {
+        return isTraining;
+    }
+
+    public void setTraining(boolean isTraining) {
+        this.isTraining = isTraining;
+    }
+
+    public Timestamp getEventDate() {
+        return eventDate;
+    }
+
+    public void setEventDate(Timestamp eventDate) {
+        this.eventDate = eventDate;
+    }
+
+    public int getEventId() {
+        return eventId;
+    }
+
 }

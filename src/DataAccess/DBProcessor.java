@@ -1,9 +1,12 @@
 package DataAccess;
 
+import BusinessLogic.Game;
 import BusinessLogic.Player;
+import BusinessLogic.Score;
 import BusinessLogic.User;
 
 import java.sql.*;
+import java.util.ArrayList;
 
 public class DBProcessor {
     private static String serverAdres = "127.0.0.1:5432";
@@ -97,7 +100,7 @@ public class DBProcessor {
     public static Player getPlayer(Player player) {
         try {
             PreparedStatement pr = connection.prepareStatement("SELECT name, country, position,\n" +
-                    "rate, birth, isrightfooted, ishealth\n" +
+                    "rate, birth, isrightfooted, ishealth, isinmainteam\n" +
                     "FROM player WHERE player_id = ?");
             pr.setInt(1, player.getPlayerId());
             ResultSet rs = pr.executeQuery();
@@ -109,6 +112,7 @@ public class DBProcessor {
                 player.setBirth(rs.getTimestamp(5));
                 player.setRightFooted(rs.getBoolean(6));
                 player.setHealth(rs.getBoolean(7));
+                player.setInMainTeam(rs.getBoolean(8));
             } else {
                 player = null;
             }
@@ -120,6 +124,36 @@ public class DBProcessor {
         return player;
     }
 
+    public static ArrayList<Player> getAllPlayers() {
+        ArrayList<Player> players = new ArrayList<Player>();
+        try {
+            PreparedStatement pr = connection.prepareStatement("SELECT name, country, position,\n" +
+                    "rate, birth, isrightfooted, isinmainteam, player_id, isHealth \n" +
+                    "FROM player");
+            ResultSet rs = pr.executeQuery();
+            while (rs.next()) {
+                String name = rs.getString(1);
+                String country = rs.getString(2);
+                String position = getPositionName (rs.getInt(3));
+                int rate = rs.getInt(4);
+                Timestamp birth = rs.getTimestamp(5);
+                boolean rightFooted = rs.getBoolean(6);
+                boolean inMainTeam = (rs.getBoolean(7));
+                int player_id = rs.getInt(8);
+                boolean isHealth = rs.getBoolean(9);
+                Player player = new Player(name, country, position, rate, birth, rightFooted,
+                        player_id, inMainTeam, isHealth);
+                players.add(player);
+            }
+            rs.close();
+            pr.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return players;
+    }
+
+
         public static int newPlayer(Player player) {
             int playerId = 0;
             int position = getPositionID (player.getPosition());
@@ -128,8 +162,8 @@ public class DBProcessor {
             }
         try {
             PreparedStatement pr = connection.prepareStatement("INSERT INTO player (name, country, \n" +
-                    "rate, birth, isrightfooted, ishealth, position) VALUES \n" +
-                    "(?, ?, ? ,? ,? ,? ,?)\n" +
+                    "rate, birth, isrightfooted, ishealth, position, isinmainteam) VALUES \n" +
+                    "(?, ?, ? ,? ,? ,? ,?, ?)\n" +
                     "RETURNING player_id");
             pr.setString(1, player.getName());
             pr.setString(2, player.getCountry());
@@ -138,6 +172,7 @@ public class DBProcessor {
             pr.setBoolean(5, player.isRightFooted());
             pr.setBoolean(6, player.isHealth());
             pr.setInt(7, position);
+            pr.setBoolean(8, player.isInMainTeam());
             ResultSet rs = pr.executeQuery();
             if (rs.next()) {
                 playerId = rs.getInt(1);
@@ -184,5 +219,158 @@ public class DBProcessor {
             e.printStackTrace();
         }
         return positionName;
+    }
+
+    public static void updatePlayer (Player player) {
+        int position = getPositionID (player.getPosition());
+        if (position == 0) {
+            return;
+        }
+        try {
+            PreparedStatement pr = connection.prepareStatement("UPDATE player SET name = ?, country = ?, \n" +
+                    "rate = ?, birth = ?, isrightfooted = ?, ishealth = ?, position = ?, isinmainteam = ?\n" +
+                    "WHERE player_id = ?");
+            pr.setString(1, player.getName());
+            pr.setString(2, player.getCountry());
+            pr.setInt(3, player.getRate());
+            pr.setTimestamp(4, player.getBirth());
+            pr.setBoolean(5, player.isRightFooted());
+            pr.setBoolean(6, player.isHealth());
+            pr.setInt(7, position);
+            pr.setBoolean(8, player.isInMainTeam());
+            pr.setInt(9, player.getPlayerId());
+            pr.executeUpdate();
+            pr.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void deletePlayer (Player player) {
+        try {
+            PreparedStatement pr = connection.prepareStatement("DELETE FROM  player\n" +
+                    "WHERE player_id = ?");
+            pr.setInt(1, player.getPlayerId());
+            pr.execute();
+            pr.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static int newGame (Game game) {
+        int eventId = 0;
+        try {
+            PreparedStatement pr = connection.prepareStatement("INSERT INTO event (name, event_date, \n" +
+                    "istraining) VALUES \n" +
+                    "(?, ?, ?)\n" +
+                    "RETURNING event_id");
+            pr.setString(1, game.getEventName());
+            pr.setTimestamp(2, game.getEventDate());
+            pr.setBoolean(3, false);
+            ResultSet rs = pr.executeQuery();
+            if (rs.next()) {
+                eventId = rs.getInt(1);
+            }
+            rs.close();
+            pr.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return eventId;
+    }
+
+    public static Game getGame (Game game) {
+        try {
+            PreparedStatement pr = connection.prepareStatement("SELECT name, event_date\n" +
+                    "FROM event WHERE event_id = ?");
+            pr.setInt(1, game.getEventId());
+            ResultSet rs = pr.executeQuery();
+            if (rs.next()) {
+                game.setEventName(rs.getString(1));
+                game.setEventDate(rs.getTimestamp(2));
+                game.setScore(getScore(game));
+            } else {
+                game = null;
+            }
+            rs.close();
+            pr.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return game;
+    }
+
+    public static Score getScore (Game game) {
+        Score score = null;
+        try {
+            PreparedStatement pr = connection.prepareStatement("SELECT ourgoals, theirgoals\n" +
+                    "FROM score WHERE game_id = ?");
+            pr.setInt(1, game.getEventId());
+            ResultSet rs = pr.executeQuery();
+            if (rs.next()) {
+                score = new Score(rs.getInt(1), rs.getInt(2));
+            }
+            rs.close();
+            pr.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return score;
+    }
+
+    public static void deleteGame (Game game) {
+        try {
+            PreparedStatement pr = connection.prepareStatement("DELETE FROM event\n" +
+                    "WHERE event_id = ?");
+            pr.setInt(1, game.getEventId());
+            pr.execute();
+            pr.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void deleteScore (Game game) {
+        try {
+            PreparedStatement pr = connection.prepareStatement("DELETE FROM score\n" +
+                    "WHERE event_id = ?");
+            pr.setInt(1, game.getEventId());
+            pr.execute();
+            pr.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void newScore (Game game) {
+        try {
+            PreparedStatement pr = connection.prepareStatement("INSERT INTO score (outgoals, theigoals, \n" +
+                    "game_id) VALUES \n" +
+                    "(?, ?, ?)");
+            Score score = game.getScore();
+            pr.setInt(1, score.getOurGoals());
+            pr.setInt(2, score.getTheirGoals());
+            pr.setInt(3, game.getEventId());
+            pr.execute();
+            pr.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void updateScore (Game game) {
+        Score score = game.getScore();
+        try {
+            PreparedStatement pr = connection.prepareStatement("UPDATE score SET ourgoals = ?, theirgoals = ?\n" +
+                    "WHERE game_id = ?");
+            pr.setInt(1, score.getOurGoals());
+            pr.setInt(2, score.getTheirGoals());
+            pr.setInt(3, game.getEventId());
+            pr.executeUpdate();
+            pr.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 }

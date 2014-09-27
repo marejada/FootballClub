@@ -13,8 +13,9 @@ public class Player {
     private boolean isRightFooted; // Сильная нога
     private boolean isHealth; // Травма
     private int playerId;
+    private boolean isInMainTeam;
 
-    public Player(int playerId) {
+    Player(int playerId) {
         this.playerId = playerId;
         if (playerId != 0) { //уже существующий игрок
             Player tempPlayer = DBProcessor.getPlayer(this);
@@ -30,6 +31,22 @@ public class Player {
         }
     }
 
+    public Player(String name, String country,
+                  String position, int rate,
+                  Timestamp birth, boolean isRightFooted,
+                  int playerId, boolean isInMainTeam,
+                  boolean isHealth) {
+        this.name = name;
+        this.country = country;
+        this.position = position;
+        this.rate = rate;
+        this.birth = birth;
+        this.isRightFooted = isRightFooted;
+        this.isHealth = isHealth;
+        this.playerId = playerId;
+        this.isInMainTeam = isInMainTeam;
+    }
+
     public boolean save () {
         if (playerId == 0) { //новый игрок
             int newPlayerId = DBProcessor.newPlayer(this);
@@ -39,8 +56,14 @@ public class Player {
                 playerId = newPlayerId;
                 return true;
             }
+        } else  {
+            DBProcessor.updatePlayer(this);
         }
         return true;
+    }
+
+    public void deletePlayer () {
+        DBProcessor.deletePlayer(this);
     }
 
     public String getName() {
@@ -105,5 +128,13 @@ public class Player {
 
     public void setPlayerId(int playerId) {
         this.playerId = playerId;
+    }
+
+    public boolean isInMainTeam() {
+        return isInMainTeam;
+    }
+
+    public void setInMainTeam(boolean isInMainTeam) {
+        this.isInMainTeam = isInMainTeam;
     }
 }
