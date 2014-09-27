@@ -6,4 +6,5 @@ public class Score {
     private int ourGoals;
     private int theirGoals;
     private ArrayList<Player> haveInjury;
+
 }
