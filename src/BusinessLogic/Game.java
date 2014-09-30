@@ -5,7 +5,7 @@ import DataAccess.DBProcessor;
 public class Game extends Event {
     private Score score;
 
-    Game (int eventId) {
+    public Game(int eventId) {
         isTraining = false;
         if (eventId != 0) { // если уже есть
             this.eventId = eventId;

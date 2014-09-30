@@ -1,7 +1,5 @@
 package BusinessLogic;
 
-import org.joda.time.DateTime;
-
 import java.sql.Timestamp;
 
 public class Event {
@@ -38,10 +36,5 @@ public class Event {
         return eventId;
     }
 
-    public void getRecomendation (Timestamp monday) {   //нужно передать понедельник
-        DateTime dateTime = new DateTime(monday);
-        dateTime = dateTime.minusDays(1);
-        Timestamp ts = new Timestamp(dateTime.getMillis());  //минус 1 день
-    }
 
 }

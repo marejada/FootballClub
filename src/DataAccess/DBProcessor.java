@@ -412,9 +412,27 @@ public class DBProcessor {
         return trainingTypeId;
     }
 
+    public static String getTrainingTypeName (int trainingTypeID) {
+        String name = null;
+        try {
+            PreparedStatement pr = connection.prepareStatement("SELECT training_name\n" +
+                    "FROM training_type WHERE training_type_id = ?");
+            pr.setInt(1, trainingTypeID);
+            ResultSet rs = pr.executeQuery();
+            if (rs.next()) {
+                name = rs.getString(1);
+            }
+            rs.close();
+            pr.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return name;
+    }
+
     public static Training getTraining (Training training) {
         try {
-            PreparedStatement pr = connection.prepareStatement("SELECT event_id.name, event_id.event_date, training_type.training_name\n" +
+            PreparedStatement pr = connection.prepareStatement("SELECT event.name, event.event_date, training_type.training_name\n" +
                     "FROM event JOIN training_type ON (event.training_type = training_type.training_type_id )\n" +
                     "WHERE event.event_id = ?");
             pr.setInt(1, training.getEventId());
@@ -432,5 +450,27 @@ public class DBProcessor {
             e.printStackTrace();
         }
         return training;
+    }
+
+    public static Event getDayEvent (Timestamp timestamp) {
+        try {
+            PreparedStatement pr = connection.prepareStatement("SELECT event_id, istraining\n" +
+                    "FROM event\n" +
+                    "WHERE event_date = ?");
+            pr.setTimestamp(1, timestamp);
+            ResultSet rs = pr.executeQuery();
+            if (rs.next()) {
+                if (rs.getBoolean(2)) {
+                    return new Training(rs.getInt(1));
+                } else {
+                    return new Game(rs.getInt(1));
+                }
+            }
+            rs.close();
+            pr.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 }
