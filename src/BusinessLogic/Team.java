@@ -22,4 +22,12 @@ public class Team {
             }
         }
     }
+
+    public ArrayList<Player> getMainLineUp() {
+        return mainLineUp;
+    }
+
+    public ArrayList<Player> getSpareLineUp() {
+        return spareLineUp;
+    }
 }
