@@ -411,4 +411,26 @@ public class DBProcessor {
         }
         return trainingTypeId;
     }
+
+    public static Training getTraining (Training training) {
+        try {
+            PreparedStatement pr = connection.prepareStatement("SELECT event_id.name, event_id.event_date, training_type.training_name\n" +
+                    "FROM event JOIN training_type ON (event.training_type = training_type.training_type_id )\n" +
+                    "WHERE event.event_id = ?");
+            pr.setInt(1, training.getEventId());
+            ResultSet rs = pr.executeQuery();
+            if (rs.next()) {
+                training.setEventName(rs.getString(1));
+                training.setEventDate(rs.getTimestamp(2));
+                training.setTrainingType(rs.getString(3));
+            } else {
+                training = null;
+            }
+            rs.close();
+            pr.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return training;
+    }
 }
