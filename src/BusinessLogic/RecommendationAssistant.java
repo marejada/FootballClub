@@ -76,6 +76,11 @@ public class RecommendationAssistant {
            if (!player.getPosition().equals(playerToSwitch.getPosition())) {
                continue;
            }
+
+           if (!player.isHealth()) {
+               continue;
+           }
+
            if (player.getCountry().equals("Russia")) {
                raiting ++;
            }
