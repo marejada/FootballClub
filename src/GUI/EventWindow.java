@@ -87,6 +87,8 @@ public class EventWindow extends javax.swing.JFrame {
             loginServ.deleteTrain(eventID);
         }
         ModalDialog.showComplete(this, "Deleted");
+        this.dispose();
+        start();
     }
 
     public EventWindow(LoginServ loginServ) {

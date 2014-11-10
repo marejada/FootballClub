@@ -43,7 +43,7 @@ public class LoginServ {
         dateTime = dateTime.secondOfMinute().setCopy(0);
         dateTime = dateTime.minuteOfHour().setCopy(0);
         dateTime = dateTime.hourOfDay().setCopy(0);
-        dateTime =dateTime.millisOfSecond().setCopy(0);
+        dateTime = dateTime.millisOfSecond().setCopy(0);
         ArrayList<ArrayList<Object>> eventString = new ArrayList<ArrayList<Object>>();
         for (int i = 0; i <= 14; i++) {
             Event event = DBProcessor.getDayEvent(new Timestamp(dateTime.plusDays(i).getMillis()));

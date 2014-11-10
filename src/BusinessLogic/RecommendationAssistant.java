@@ -7,7 +7,47 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 
 public class RecommendationAssistant {
+
+    private static int [] noGameTrain = {4,1,0,2,3,1};
+    private static int [] oneGameTrain = {1,0,2,3,1};
+    private static int [] twoGameTrain = {1,0,2,1};
+
+    public static int trainList(int trainCounter, int curNumber) {
+        switch (trainCounter) {
+            case 0 : {
+                return noGameTrain[curNumber];
+            }
+            case 1 : {
+                return oneGameTrain[curNumber];
+            }
+            case 2 : {
+                return twoGameTrain[curNumber];
+            }
+        }
+        return 0;
+    }
+
+
+    public static int getTrainCount (Timestamp today) {
+        Timestamp currentStamp = today;
+        int counter = 0;
+        for (int i = 1; i <= 7; i ++) {
+            Event event = DBProcessor.getDayEvent(currentStamp);
+            if (event != null) {
+                if (!event.isTraining) {
+                    counter ++;
+                }
+            }
+            DateTime dateTime = new DateTime(currentStamp);
+            dateTime = dateTime.plusDays(1);
+            currentStamp = new Timestamp(dateTime.getMillis());
+        }
+        return counter;
+    }
+
     public static void getRecommendation(Timestamp monday) {   //нужно передать понедельник
+        int trainCount = getTrainCount(monday);
+        int cuttrainCount = 0;
         Timestamp currentStamp = monday;
         String lastTrainingType = null;
         for (int i = 1; i < 7; i ++) {
@@ -17,19 +57,33 @@ public class RecommendationAssistant {
                 if (lastTrainingType == null) { // если не известна последняя тренировка
                     lastTrainingType = getLastTrainingType(currentStamp);
                     if (lastTrainingType == null) { //берем первую тренировку
-                        lastTrainingType = DBProcessor.getTrainingTypeName(1);
-                        type = 1;
+                        lastTrainingType = DBProcessor.getTrainingTypeName(trainList(trainCount, 0));
+                        type = trainList(trainCount, 0);
                     } else {
                         type = DBProcessor.getTrainingTypeId(lastTrainingType);
                     }
                 }else {//высчитываем следующую тренировку
-                    int trainingTypeID = DBProcessor.getTrainingTypeId(lastTrainingType);
-                    lastTrainingType = DBProcessor.getTrainingTypeName(trainingTypeID + 1); //берем следующую тренировку
-                    type = trainingTypeID + 1;
-                    if (lastTrainingType == null) { //если завершен полный цикл тренировок
-                        lastTrainingType = DBProcessor.getTrainingTypeName(1);
-                        type = 1;
+                    cuttrainCount ++;
+                    boolean isRight = true;
+                    switch (trainCount) {
+                        case 1 : {
+                            if (cuttrainCount >= 5) {
+                                isRight = false;
+                            }
+                            break;
+                        }
+                        case 2 : {
+                            if (cuttrainCount >= 4) {
+                                isRight = false;
+                            }
+                            break;
+                        }
                     }
+                    if (!isRight) {
+                        continue;
+                    }
+                    type = trainList(trainCount, cuttrainCount);
+                    lastTrainingType = DBProcessor.getTrainingTypeName(trainList(trainCount, cuttrainCount));
                 }
                 System.out.println("Ставим тренировку " + currentStamp + " " + lastTrainingType );
                 Training training = new Training(0);
@@ -38,6 +92,7 @@ public class RecommendationAssistant {
             } else {
                 if (event.isTraining()) { //если тренировка
                     lastTrainingType = ((Training) event).getTrainingType();
+                    cuttrainCount ++;
                 }
             }
             DateTime dateTime = new DateTime(currentStamp);
@@ -96,7 +151,13 @@ public class RecommendationAssistant {
            }
 
            raiting += player.getRate();
-           if (player.isRightFooted()) {
+
+           //правша-левша
+           if (playerToSwitch.isRightFooted() && player.isRightFooted()) {
+               raiting ++;
+           }
+
+           if (!playerToSwitch.isRightFooted() && !player.isRightFooted()) {
                raiting ++;
            }
 
