@@ -1,0 +1,44 @@
+JFDML JFormDesigner: "5.1.3.0.158" Java: "1.8.0_25" encoding: "UTF-8"
+
+new FormModel {
+	contentType: "form/swing"
+	root: new FormRoot {
+		add( new FormWindow( "javax.swing.JFrame", new FormLayoutManager( class org.jdesktop.layout.GroupLayout ) {
+			"$horizontalGroup": "par l {seq {space :::p, par l {seq l {comp backButton:::p::p, space :::x}, seq t {space :0:128:x, par l {seq t {par t {comp loginTextField:::p:92:p, comp passwordField:::p:92:p}, space :p:134:p}, seq t {comp label1:::p::p, space :p:167:p}, seq t {comp label2:::p::p, space :p:161:p}, seq t {comp enterButton:::p:139:p, space :p:111:p}}}}}}"
+			"$verticalGroup": "par l {seq l {space :::p, comp backButton:::p::p, space :p:54:p, comp label1:::p::p, space :::p, comp loginTextField:::p::p, space :::p, comp label2:::p:12:p, space :::p, comp passwordField:::p::p, space s:::p, comp enterButton:::p::p, space ::48:x}}"
+		} ) {
+			name: "this"
+			"defaultCloseOperation": 3
+			add( new FormComponent( "javax.swing.JButton" ) {
+				name: "backButton"
+				"text": "назад"
+				"toolTipText": ""
+				addEvent( new FormEvent( "java.awt.event.ActionListener", "actionPerformed", "backButtonActionPerformed", true ) )
+			} )
+			add( new FormComponent( "javax.swing.JFormattedTextField" ) {
+				name: "loginTextField"
+				"horizontalAlignment": 0
+			} )
+			add( new FormComponent( "javax.swing.JPasswordField" ) {
+				name: "passwordField"
+				addEvent( new FormEvent( "java.awt.event.KeyListener", "keyPressed", "passwordFieldKeyPressed", true ) )
+			} )
+			add( new FormComponent( "javax.swing.JButton" ) {
+				name: "enterButton"
+				"text": "вход"
+				addEvent( new FormEvent( "java.awt.event.ActionListener", "actionPerformed", "enterButtonActionPerformed", true ) )
+			} )
+			add( new FormComponent( "javax.swing.JLabel" ) {
+				name: "label1"
+				"text": "Логин"
+			} )
+			add( new FormComponent( "javax.swing.JLabel" ) {
+				name: "label2"
+				"text": "Пароль"
+			} )
+		}, new FormLayoutConstraints( null ) {
+			"size": new java.awt.Dimension( 400, 300 )
+			"location": new java.awt.Point( 5, 0 )
+		} )
+	}
+}

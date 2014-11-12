@@ -6,6 +6,12 @@ public class User {
     private boolean isAdmin;
     private int UserId;
 
+    public User(String login, String password, boolean isAdmin) {
+        this.login = login;
+        this.password = password;
+        this.isAdmin = isAdmin;
+    }
+
     public String getLogin() {
         return login;
     }

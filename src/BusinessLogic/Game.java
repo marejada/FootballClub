@@ -16,6 +16,15 @@ public class Game extends Event {
         }
     }
 
+    public void save () {
+        if (eventId != 0) {
+            DBProcessor.updateGame(this);
+        } else {
+            int newEventId = DBProcessor.newGame(this);
+            this.eventId = newEventId;
+        }
+    }
+
     public void deleteGame () {
         DBProcessor.deleteEvent(this);
         DBProcessor.deleteScore(this);
@@ -37,9 +46,5 @@ public class Game extends Event {
     public void addNewScore (Score score) {
         this.score = score;
         DBProcessor.newScore(this);
-    }
-    public void Save () {
-        int newEventId = DBProcessor.newGame(this);
-        this.eventId = newEventId;
     }
 }

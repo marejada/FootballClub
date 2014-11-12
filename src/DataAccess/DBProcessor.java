@@ -75,24 +75,44 @@ public class DBProcessor {
     }
 
     public static User loginUser(User user) {
+        PreparedStatement pr = null;
+        ResultSet rs = null;
         try {
-            PreparedStatement pr = connection.prepareStatement("SELECT isadmin, user_id FROM \"user\" WHERE login = ? AND password = ?");
+            pr = connection.prepareStatement("SELECT isadmin, user_id FROM \"user\" WHERE login = ? AND password = ?");
             pr.setString(1, user.getLogin());
             pr.setString(2, user.getPassword());
-            ResultSet rs = pr.executeQuery();
+            rs = pr.executeQuery();
             if (rs.next()) {
                 user.setAdmin(rs.getBoolean(1));
                 user.setUserId(rs.getInt(2));
             } else {
                 user = null;
             }
-            rs.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            close(pr, rs);
+        }
+        return user;
+    }
+
+    public static void close (PreparedStatement pr) {
+        try {
             pr.close();
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        return user;
     }
+
+    public static void close (PreparedStatement pr, ResultSet rs) {
+        close(pr);
+        try {
+            rs.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
 
     public static Player getPlayer(Player player) {
         try {
@@ -342,7 +362,7 @@ public class DBProcessor {
 
     public static void newScore (Game game) {
         try {
-            PreparedStatement pr = connection.prepareStatement("INSERT INTO score (outgoals, theigoals, \n" +
+            PreparedStatement pr = connection.prepareStatement("INSERT INTO score (ourgoals, theirgoals, \n" +
                     "game_id) VALUES \n" +
                     "(?, ?, ?)");
             Score score = game.getScore();
@@ -371,17 +391,52 @@ public class DBProcessor {
         }
     }
 
-    public static int newTraining (Training training) {
+    public static void updateGame (Game game) {
+        PreparedStatement pr = null;
+        try {
+             pr = connection.prepareStatement("UPDATE event SET name = ?, event_date = ?\n" +
+                    "WHERE event_id = ?");
+            pr.setString(1, game.getEventName());
+            pr.setTimestamp(2, game.getEventDate());
+            pr.setInt(3, game.getEventId());
+            pr.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }   finally {
+            close(pr);
+        }
+    }
+
+
+
+
+    public static void updateTraining (Training training, int typeID) {
+        PreparedStatement pr = null;
+        try {
+            pr = connection.prepareStatement("UPDATE event SET training_type = ?, event_date = ?\n" +
+                    "WHERE event_id = ?");
+            pr.setInt(1, typeID);
+            pr.setTimestamp(2, training.getEventDate());
+            pr.setInt(3, training.getEventId());
+            pr.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }   finally {
+            close(pr);
+        }
+    }
+
+    public static int newTraining (Training training, int type) {
         int eventId = 0;
         try {
             PreparedStatement pr = connection.prepareStatement("INSERT INTO event (name, event_date, \n" +
                     "istraining, training_type) VALUES \n" +
                     "(?, ?, ?, ?)\n" +
                     "RETURNING event_id");
-            pr.setString(1, training.getEventName());
+            pr.setString(1, "Training");
             pr.setTimestamp(2, training.getEventDate());
-            pr.setBoolean(3, false);
-            pr.setInt(4, getTrainingTypeId(training.getTrainingType()));
+            pr.setBoolean(3, true);
+            pr.setInt(4, type);
             ResultSet rs = pr.executeQuery();
             if (rs.next()) {
                 eventId = rs.getInt(1);
@@ -451,6 +506,29 @@ public class DBProcessor {
         }
         return training;
     }
+
+    public static ArrayList<String> getTrainingsTypes() {
+        ArrayList<String> trainings = new ArrayList<String>();
+        ResultSet rs = null;
+        PreparedStatement pr = null;
+        try {
+            pr = connection.prepareStatement("SELECT training_type_id, training_name\n" +
+                    "FROM training_type\n" +
+                    "ORDER BY training_type_id");
+            rs = pr.executeQuery();
+            while (rs.next()) {
+                trainings.add(rs.getString(2));
+            }
+            rs.close();
+            pr.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            close(pr, rs);
+        }
+        return trainings;
+    }
+
 
     public static Event getDayEvent (Timestamp timestamp) {
         try {

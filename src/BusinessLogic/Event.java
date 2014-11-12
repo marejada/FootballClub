@@ -1,6 +1,8 @@
 package BusinessLogic;
 
 import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.Date;
 
 public class Event {
     protected String eventName;
@@ -36,5 +38,24 @@ public class Event {
         return eventId;
     }
 
-
+    public ArrayList<Object> getEventString () {
+        ArrayList <Object> res = new ArrayList<Object>();
+        res.add(eventId);
+        res.add(new Date(eventDate.getTime()));
+        if (isTraining) {
+            res.add("Training");
+            Training training = (Training) this;
+            res.add(training.getTrainingType());
+        } else {
+            res.add("Game");
+            String about = eventName;
+            Game game = (Game) this;
+            Score score = game.getScore();
+            if (score != null) {
+                 about += " " + score.getOurGoals() + " : " + score.getTheirGoals();
+            }
+            res.add(about);
+        }
+        return res;
+    }
 }

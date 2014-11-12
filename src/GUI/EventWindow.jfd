@@ -1,0 +1,82 @@
+JFDML JFormDesigner: "5.1.3.0.158" Java: "1.8.0_25" encoding: "UTF-8"
+
+new FormModel {
+	contentType: "form/swing"
+	root: new FormRoot {
+		add( new FormWindow( "javax.swing.JFrame", new FormLayoutManager( class org.jdesktop.layout.GroupLayout ) {
+			"$horizontalGroup": "par l {seq l {space :p:43:p, comp deleteButton:::p::p, space :p:80:p, comp editButton:::p::p, space ::72:x, comp heloButton:::p:127:p, space :p:64:p}, seq {space :p:18:p, par l {seq {comp backButton:::p::p, space :p:138:p, comp label1:::p::p}, comp jScrollPane1:::p:592:p}, space ::34:x}}"
+			"$verticalGroup": "par l {seq l {space :p:22:p, par t {comp label1:::p::p, comp backButton:::p::p}, space :p:37:p, comp jScrollPane1:::p:226:p, space :p:30:p, par b {comp deleteButton::b:p::p, comp editButton::b:p::p, comp heloButton::b:p::p}, space ::44:x}}"
+		} ) {
+			name: "this"
+			"defaultCloseOperation": 3
+			add( new FormContainer( "javax.swing.JScrollPane", new FormLayoutManager( class javax.swing.JScrollPane ) ) {
+				name: "jScrollPane1"
+				add( new FormComponent( "javax.swing.JTable" ) {
+					name: "table1"
+					"model": new com.jformdesigner.model.SwingTableModel( new java.util.Vector {
+						add( new java.util.Vector {
+							add( null )
+							add( null )
+							add( null )
+							add( null )
+						} )
+						add( new java.util.Vector {
+							add( null )
+							add( null )
+							add( null )
+							add( null )
+						} )
+					}, new java.util.Vector {
+						add( "ID" )
+						add( "Дата" )
+						add( "Тип" )
+						add( "Информация" )
+					}, new java.util.Vector {
+						add( class java.lang.Integer )
+						add( class java.util.Date )
+						add( class java.lang.String )
+						add( class java.lang.String )
+					}, new java.util.Vector {
+						add( false )
+						add( false )
+						add( false )
+						add( false )
+					}, new java.util.Vector {
+						add( null )
+						add( null )
+						add( null )
+						add( null )
+					} )
+				} )
+			} )
+			add( new FormComponent( "javax.swing.JLabel" ) {
+				name: "label1"
+				"text": "График мероприятий команды на 2 недели"
+			} )
+			add( new FormComponent( "javax.swing.JButton" ) {
+				name: "deleteButton"
+				"text": "Удалить событие"
+				addEvent( new FormEvent( "java.awt.event.ActionListener", "actionPerformed", "deleteButtonActionPerformed", true ) )
+			} )
+			add( new FormComponent( "javax.swing.JButton" ) {
+				name: "editButton"
+				"text": "Изменить событие"
+				addEvent( new FormEvent( "java.awt.event.ActionListener", "actionPerformed", "editButtonActionPerformed", true ) )
+				addEvent( new FormEvent( "java.awt.event.ActionListener", "actionPerformed", "editButtonActionPerformed", true ) )
+			} )
+			add( new FormComponent( "javax.swing.JButton" ) {
+				name: "heloButton"
+				"text": "Помошник"
+				addEvent( new FormEvent( "java.awt.event.ActionListener", "actionPerformed", "heloButtonActionPerformed", true ) )
+			} )
+			add( new FormComponent( "javax.swing.JButton" ) {
+				name: "backButton"
+				"text": "назад"
+				addEvent( new FormEvent( "java.awt.event.ActionListener", "actionPerformed", "backButtonActionPerformed", true ) )
+			} )
+		}, new FormLayoutConstraints( null ) {
+			"size": new java.awt.Dimension( 660, 445 )
+			"location": new java.awt.Point( 0, 0 )
+		} )
+	}
+}

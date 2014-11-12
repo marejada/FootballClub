@@ -1,0 +1,34 @@
+JFDML JFormDesigner: "5.1.3.0.158" Java: "1.8.0_25" encoding: "UTF-8"
+
+new FormModel {
+	contentType: "form/swing"
+	root: new FormRoot {
+		add( new FormWindow( "javax.swing.JFrame", new FormLayoutManager( class org.jdesktop.layout.GroupLayout ) {
+			"$horizontalGroup": "par l {seq {par l {seq {space :p:24:p, comp anonEnterButton:::p:156:p, space :p:30:p, comp managerEnterButton:::p::p}, seq l {space :p:138:p, comp label1:::p::p}}, space ::31:x}}"
+			"$verticalGroup": "par l {seq {space :p:54:p, comp label1:::p::p, space :p:35:p, par b {comp anonEnterButton::b:p:65:p, comp managerEnterButton::b:p:65:p}, space ::96:x}}"
+		} ) {
+			name: "this"
+			"defaultCloseOperation": 3
+			add( new FormComponent( "javax.swing.JButton" ) {
+				name: "anonEnterButton"
+				"text": "Войти как Гость"
+				"maximumSize": new java.awt.Dimension( 139, 23 )
+				"minimumSize": new java.awt.Dimension( 139, 23 )
+				addEvent( new FormEvent( "java.awt.event.ActionListener", "actionPerformed", "anonEnterActionPerformed", true ) )
+				addEvent( new FormEvent( "java.awt.event.ActionListener", "actionPerformed", "anonEnterButtonActionPerformed", true ) )
+			} )
+			add( new FormComponent( "javax.swing.JButton" ) {
+				name: "managerEnterButton"
+				"text": "Войти как Менеджер"
+				addEvent( new FormEvent( "java.awt.event.ActionListener", "actionPerformed", "managerEnterActionPerformed", true ) )
+			} )
+			add( new FormComponent( "javax.swing.JLabel" ) {
+				name: "label1"
+				"text": "Добро пожаловать"
+			} )
+		}, new FormLayoutConstraints( null ) {
+			"size": new java.awt.Dimension( 400, 300 )
+			"location": new java.awt.Point( 0, 0 )
+		} )
+	}
+}

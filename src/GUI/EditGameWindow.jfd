@@ -1,0 +1,61 @@
+JFDML JFormDesigner: "5.1.3.0.158" Java: "1.8.0_25" encoding: "UTF-8"
+
+new FormModel {
+	contentType: "form/swing"
+	root: new FormRoot {
+		add( new FormWindow( "javax.swing.JFrame", new FormLayoutManager( class org.jdesktop.layout.GroupLayout ) {
+			"$horizontalGroup": "par l {seq l {space :p:70:p, comp label2:::p::p, space ::292:x, comp label3:::p::p, space :p:120:p}, seq {space :::p, comp backButton:::p::p, space :p:116:p, comp label1:::p:150:p, space ::225:x}, seq l {par l {seq l {space :p:41:p, comp nameField:::p:111:p}, seq l {space :p:213:p, par l:::p {seq {comp ourField:::p:37:p, space :::x, comp theirField:::p:36:p}, comp saveButton::::97:x, comp label4::::97:x}}}, space ::65:x, comp dateField:::p:116:p, space :p:73:p}}"
+			"$verticalGroup": "par l {seq {par l {seq l {space :::p, comp backButton:::p::p, space :p:58:p, par b {comp label2::b:p::p, comp label3::b:::x}, space :::p}, seq l {space :p:29:p, comp label1:::p::p, space :::x, comp label4:::p::p, space :p:16:p}}, par b {comp nameField::b:p::p, comp ourField::b:p::p, comp theirField::b:p::p, comp dateField::b:p::p}, space :p:56:p, comp saveButton:::p::p, space :p:52:p}}"
+		} ) {
+			name: "this"
+			"defaultCloseOperation": 3
+			auxiliary() {
+				"JavaCodeGenerator.postInitCode": "String[] params = loginServ.getGameNameDate(gameID);\nnameField.setText(params[0]);\ndateField.setText(params[1].substring(0,10));"
+			}
+			add( new FormComponent( "javax.swing.JButton" ) {
+				name: "backButton"
+				"text": "назад"
+				auxiliary() {
+					"JavaCodeGenerator.preInitCode": "int a = 2;"
+				}
+				addEvent( new FormEvent( "java.awt.event.ActionListener", "actionPerformed", "backButtonActionPerformed", true ) )
+			} )
+			add( new FormComponent( "javax.swing.JTextField" ) {
+				name: "nameField"
+			} )
+			add( new FormComponent( "javax.swing.JLabel" ) {
+				name: "label1"
+				"text": "Редактирование игры"
+			} )
+			add( new FormComponent( "javax.swing.JLabel" ) {
+				name: "label2"
+				"text": "Название"
+			} )
+			add( new FormComponent( "javax.swing.JTextField" ) {
+				name: "dateField"
+			} )
+			add( new FormComponent( "javax.swing.JLabel" ) {
+				name: "label3"
+				"text": "Дата"
+			} )
+			add( new FormComponent( "javax.swing.JButton" ) {
+				name: "saveButton"
+				"text": "Сохранить"
+				addEvent( new FormEvent( "java.awt.event.ActionListener", "actionPerformed", "saveButtonActionPerformed", true ) )
+			} )
+			add( new FormComponent( "javax.swing.JTextField" ) {
+				name: "ourField"
+			} )
+			add( new FormComponent( "javax.swing.JTextField" ) {
+				name: "theirField"
+			} )
+			add( new FormComponent( "javax.swing.JLabel" ) {
+				name: "label4"
+				"text": "Результат матча"
+			} )
+		}, new FormLayoutConstraints( null ) {
+			"size": new java.awt.Dimension( 580, 300 )
+			"location": new java.awt.Point( 0, 0 )
+		} )
+	}
+}

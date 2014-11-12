@@ -4,27 +4,37 @@ import DataAccess.DBProcessor;
 import org.joda.time.DateTime;
 
 import java.sql.Timestamp;
+import java.util.ArrayList;
 
 public class RecommendationAssistant {
     public static void getRecommendation(Timestamp monday) {   //нужно передать понедельник
         Timestamp currentStamp = monday;
         String lastTrainingType = null;
         for (int i = 1; i < 7; i ++) {
+            int type;
             Event event = DBProcessor.getDayEvent(currentStamp);
             if (event == null) { //нужно поставить тренировку
                 if (lastTrainingType == null) { // если не известна последняя тренировка
                     lastTrainingType = getLastTrainingType(currentStamp);
                     if (lastTrainingType == null) { //берем первую тренировку
                         lastTrainingType = DBProcessor.getTrainingTypeName(1);
+                        type = 1;
+                    } else {
+                        type = DBProcessor.getTrainingTypeId(lastTrainingType);
                     }
                 }else {//высчитываем следующую тренировку
                     int trainingTypeID = DBProcessor.getTrainingTypeId(lastTrainingType);
                     lastTrainingType = DBProcessor.getTrainingTypeName(trainingTypeID + 1); //берем следующую тренировку
+                    type = trainingTypeID + 1;
                     if (lastTrainingType == null) { //если завершен полный цикл тренировок
                         lastTrainingType = DBProcessor.getTrainingTypeName(1);
+                        type = 1;
                     }
                 }
                 System.out.println("Ставим тренировку " + currentStamp + " " + lastTrainingType );
+                Training training = new Training(0);
+                training.setEventDate(currentStamp);
+                DBProcessor.newTraining(training, type);
             } else {
                 if (event.isTraining()) { //если тренировка
                     lastTrainingType = ((Training) event).getTrainingType();
@@ -52,9 +62,9 @@ public class RecommendationAssistant {
         return null;
     }
 
-   public static void recommendPlayer (Player playerToSwitch) {
+   public static ArrayList<Player> recommendPlayer (Player playerToSwitch) {
        Team team = new Team();
-       team.fiiTeams();
+       ArrayList<Player> players = new ArrayList<Player>();
        int rus = 0;
        for (Player player : team.getMainLineUp()) {   //считаем сколько русских игроков
            if (player.getCountry().equals("Russia")){
@@ -99,8 +109,10 @@ public class RecommendationAssistant {
            } else {
                raiting ++;
            }
-           System.out.println(player.getName() + " " + raiting);
-
+           player.setRate(raiting);
+           //System.out.println(player.getName() + " " + raiting);
+           players.add(player);
        }
+       return players;
    }
 }

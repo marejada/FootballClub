@@ -3,6 +3,7 @@ package BusinessLogic;
 import DataAccess.DBProcessor;
 
 import java.sql.Timestamp;
+import java.util.ArrayList;
 
 public class Player {
     private String name;
@@ -14,6 +15,19 @@ public class Player {
     private boolean isHealth; // Травма
     private int playerId;
     private boolean isInMainTeam;
+
+    public ArrayList<Object> getPlayerString () {
+        ArrayList<Object> player = new ArrayList<Object>();
+        player.add(playerId);
+        player.add(name);
+        player.add(country);
+        player.add(position);
+        player.add(rate);
+        player.add(isRightFooted);
+        player.add(isHealth);
+        player.add(isInMainTeam);
+        return player;
+    }
 
     public Player(int playerId) {
         this.playerId = playerId;
@@ -137,4 +151,6 @@ public class Player {
     public void setInMainTeam(boolean isInMainTeam) {
         this.isInMainTeam = isInMainTeam;
     }
+
+
 }
